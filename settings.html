@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="topbar"><h1>Settings</h1></div>
+  <div class="screen">
+    <div class="card card-row">
+      <div style="font-size:34px;">👤</div>
+      <div>
+        <p class="card-title" id="pName">-</p>
+        <p class="small" id="pEmail">-</p>
+      </div>
+    </div>
+
+    <p class="card-sub mb">App Settings</p>
+
+    <div class="card">
+      <div class="card-row" style="justify-content:space-between;margin-bottom:14px;">
+        <div><p class="card-title">Fall Detection</p><p class="small">Detects sudden falls using phone sensors</p></div>
+        <label class="switch">
+          <input type="checkbox" id="fallToggle" onchange="updateSettings()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="card-row" style="justify-content:space-between;margin-bottom:14px;">
+        <div><p class="card-title">Countdown Duration</p><p class="small" id="countdownLabel">30 seconds</p></div>
+        <select id="countdownSelect" onchange="updateSettings()" style="border:1px solid var(--border);border-radius:8px;padding:6px;">
+          <option value="15">15s</option>
+          <option value="30">30s</option>
+          <option value="45">45s</option>
+          <option value="60">60s</option>
+        </select>
+      </div>
+
+      <div class="card-row" style="justify-content:space-between;">
+        <div><p class="card-title">Notifications</p><p class="small">Get alerts and updates</p></div>
+        <label class="switch">
+          <input type="checkbox" id="notifToggle" onchange="updateSettings()">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card" onclick="window.location.href='contact.html'" style="cursor:pointer;">
+      <div class="card-row" style="justify-content:space-between;">
+        <span class="card-title">📇 Emergency Contact</span><span>›</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="small" style="margin:0;">ℹ️ ElderSafe App version 1.0.0</p>
+    </div>
+
+    <button class="btn btn-outline" onclick="logout()">Log Out</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-icon">🏠</span>Home</a>
+    <a href="location.html"><span class="nav-icon">📍</span>Location</a>
+    <a href="history.html"><span class="nav-icon">🕐</span>History</a>
+    <a href="settings.html" class="active"><span class="nav-icon">⚙️</span>Settings</a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+const user = getCurrentUser();
+if (user) {
+  document.getElementById("pName").textContent = user.name;
+  document.getElementById("pEmail").textContent = user.email;
+}
+
+const settings = getSettings();
+document.getElementById("fallToggle").checked = settings.fallDetection;
+document.getElementById("notifToggle").checked = settings.notifications;
+document.getElementById("countdownSelect").value = settings.countdown;
+document.getElementById("countdownLabel").textContent = settings.countdown + " seconds";
+
+function updateSettings() {
+  const s = {
+    fallDetection: document.getElementById("fallToggle").checked,
+    notifications: document.getElementById("notifToggle").checked,
+    countdown: parseInt(document.getElementById("countdownSelect").value, 10)
+  };
+  saveSettings(s);
+  document.getElementById("countdownLabel").textContent = s.countdown + " seconds";
+}
+</script>
+</body>
+</html>

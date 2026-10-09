@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="screen">
+    <div class="card-row" style="justify-content:space-between;margin-bottom:18px;">
+      <div>
+        <p style="font-size:20px;font-weight:700;margin:0;">Hello, <span id="userName">Friend</span> 👋</p>
+        <p class="small" style="margin:2px 0 0;">Stay safe, always!</p>
+      </div>
+      <a href="settings.html" style="font-size:26px;text-decoration:none;">👤</a>
+    </div>
+
+    <div class="card" style="background:var(--green-light);border-color:var(--green-light);">
+      <div class="card-row" style="justify-content:space-between;">
+        <div>
+          <p class="card-sub" style="color:var(--green);font-weight:600;">Fall Detection</p>
+          <p id="fallStatusText" style="font-size:20px;font-weight:800;color:var(--green);margin:2px 0 0;">ON</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="fallToggle" onchange="toggleFallDetection()">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;">
+      <div class="card" style="flex:1;">
+        <p class="card-sub">📍 GPS</p>
+        <p class="card-title" style="color:var(--green);">Active</p>
+      </div>
+      <div class="card" style="flex:1;">
+        <p class="card-sub">🔋 Battery</p>
+        <p class="card-title" id="batteryText">--%</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="card-sub">Emergency Contact</p>
+      <div class="card-row" style="justify-content:space-between;">
+        <div>
+          <p class="card-title" id="contactName">Not set</p>
+          <p class="small" id="contactPhone"></p>
+        </div>
+        <a href="contact.html" style="text-decoration:none;color:var(--muted);">›</a>
+      </div>
+    </div>
+
+    <button class="sos-btn" onclick="sendManualSOS()">🔔 SOS<span>Tap for help</span></button>
+
+    <p class="center small">This is a demo button — for the phone's own sensors,
+      use "Simulate Fall" below.</p>
+    <button class="btn btn-outline mt" onclick="window.location.href='fall-detected.html'">⚠️ Simulate Fall Detected</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html" class="active"><span class="nav-icon">🏠</span>Home</a>
+    <a href="location.html"><span class="nav-icon">📍</span>Location</a>
+    <a href="history.html"><span class="nav-icon">🕐</span>History</a>
+    <a href="settings.html"><span class="nav-icon">⚙️</span>Settings</a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+const user = getCurrentUser();
+if (user) document.getElementById("userName").textContent = user.name.split(" ")[0];
+
+// settings -> fall detection toggle
+const settings = getSettings();
+document.getElementById("fallToggle").checked = settings.fallDetection;
+updateFallText(settings.fallDetection);
+
+function updateFallText(on) {
+  document.getElementById("fallStatusText").textContent = on ? "ON" : "OFF";
+  document.getElementById("fallStatusText").style.color = on ? "var(--green)" : "var(--muted)";
+}
+function toggleFallDetection() {
+  const on = document.getElementById("fallToggle").checked;
+  const s = getSettings();
+  s.fallDetection = on;
+  saveSettings(s);
+  updateFallText(on);
+}
+
+// contact card
+const contact = getContact();
+if (contact) {
+  document.getElementById("contactName").textContent = contact.name;
+  document.getElementById("contactPhone").textContent = contact.phone || "";
+}
+
+// battery (real API where supported, else a believable demo value)
+if (navigator.getBattery) {
+  navigator.getBattery().then(b => {
+    document.getElementById("batteryText").textContent = Math.round(b.level * 100) + "%";
+  });
+} else {
+  document.getElementById("batteryText").textContent = "78%";
+}
+
+function sendManualSOS() {
+  addAlert({
+    type: "Manual SOS",
+    icon: "manual",
+    time: formatNow(),
+    status: "Sent"
+  });
+  window.location.href = "sos-sent.html";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Current Location - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">
+    <a href="dashboard.html" class="back-btn">←</a>
+    <h1>Current Location</h1>
+  </div>
+  <div class="screen">
+    <div class="map-box" style="height:320px;">
+      <iframe id="mapFrame" loading="lazy" style="height:320px;"></iframe>
+    </div>
+
+    <div class="card">
+      <div class="card-row" style="margin-bottom:8px;">
+        <span class="pill-green">● Location Sharing Active</span>
+      </div>
+      <p class="small">Your location is visible to your emergency contact.</p>
+      <div style="display:flex;justify-content:space-between;margin-top:10px;">
+        <div>
+          <p class="card-sub">Latitude</p>
+          <p class="card-title" id="lat">-</p>
+        </div>
+        <div>
+          <p class="card-sub">Longitude</p>
+          <p class="card-title" id="lng">-</p>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" id="mapsLink" target="_blank" class="btn btn-outline">📍 Open in Google Maps</a>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-icon">🏠</span>Home</a>
+    <a href="location.html" class="active"><span class="nav-icon">📍</span>Location</a>
+    <a href="history.html"><span class="nav-icon">🕐</span>History</a>
+    <a href="settings.html"><span class="nav-icon">⚙️</span>Settings</a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+getLocation(loc => {
+  document.getElementById("lat").textContent = loc.lat.toFixed(4);
+  document.getElementById("lng").textContent = loc.lng.toFixed(4);
+  document.getElementById("mapsLink").href = "https://www.google.com/maps?q=" + loc.lat + "," + loc.lng;
+  const d = 0.01;
+  const bbox = (loc.lng - d) + "," + (loc.lat - d) + "," + (loc.lng + d) + "," + (loc.lat + d);
+  document.getElementById("mapFrame").src =
+    "https://www.openstreetmap.org/export/embed.html?bbox=" + bbox +
+    "&marker=" + loc.lat + "," + loc.lng + "&layer=mapnik";
+});
+</script>
+</body>
+</html>

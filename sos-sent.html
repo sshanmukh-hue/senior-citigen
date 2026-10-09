@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emergency Alert Sent - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="screen center">
+    <div style="font-size:64px;margin-top:20px;color:var(--green);">✔️</div>
+    <p style="color:var(--green);font-weight:800;font-size:20px;">Emergency Alert Sent!</p>
+    <p class="small">Your emergency contact has been notified and your location is shared.</p>
+
+    <div class="card" style="text-align:left;">
+      <div class="card-row" style="margin-bottom:10px;">
+        <span class="icon-btn">👤</span>
+        <div><p class="card-sub">Contact</p><p class="card-title" id="cName">-</p></div>
+      </div>
+      <div class="card-row" style="margin-bottom:10px;">
+        <span class="icon-btn">🕐</span>
+        <div><p class="card-sub">Time</p><p class="card-title" id="cTime">-</p></div>
+      </div>
+      <div class="card-row">
+        <span class="icon-btn">📍</span>
+        <div>
+          <p class="card-sub">Location</p>
+          <p class="card-title" id="cLoc">-</p>
+          <a href="#" id="mapsLink" target="_blank" class="link small">View on Google Maps</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-box">
+      <iframe id="mapFrame" loading="lazy"></iframe>
+    </div>
+
+    <a href="dashboard.html" class="btn btn-primary">OK</a>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+const contact = getContact();
+document.getElementById("cName").textContent = contact ?
+  contact.name + (contact.phone ? " · " + contact.phone : "") : "No contact set";
+document.getElementById("cTime").textContent = formatNow();
+
+getLocation(loc => {
+  document.getElementById("cLoc").textContent =
+    "Lat: " + loc.lat.toFixed(4) + ", Long: " + loc.lng.toFixed(4);
+  document.getElementById("mapsLink").href =
+    "https://www.google.com/maps?q=" + loc.lat + "," + loc.lng;
+  const d = 0.01;
+  const bbox = (loc.lng - d) + "," + (loc.lat - d) + "," + (loc.lng + d) + "," + (loc.lat + d);
+  document.getElementById("mapFrame").src =
+    "https://www.openstreetmap.org/export/embed.html?bbox=" + bbox +
+    "&marker=" + loc.lat + "," + loc.lng + "&layer=mapnik";
+});
+</script>
+</body>
+</html>

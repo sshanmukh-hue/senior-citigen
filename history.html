@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alert History - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">
+    <a href="dashboard.html" class="back-btn">←</a>
+    <h1>Alert History</h1>
+  </div>
+  <div class="screen" id="list">
+    <!-- alert-item rows injected here -->
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-icon">🏠</span>Home</a>
+    <a href="location.html"><span class="nav-icon">📍</span>Location</a>
+    <a href="history.html" class="active"><span class="nav-icon">🕐</span>History</a>
+    <a href="settings.html"><span class="nav-icon">⚙️</span>Settings</a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+const listEl = document.getElementById("list");
+const alerts = getAlerts();
+
+if (alerts.length === 0) {
+  listEl.innerHTML = '<p class="small center mt">No alerts yet. Trigger a demo SOS or fall from the Home screen.</p>';
+} else {
+  alerts.forEach(a => {
+    const isFall = a.icon === "fall";
+    const row = document.createElement("div");
+    row.className = "alert-item";
+    row.innerHTML = `
+      <div class="alert-icon ${a.icon}">${isFall ? "🚶" : "🆘"}</div>
+      <div style="flex:1;">
+        <p class="card-title" style="margin:0;">${a.type}</p>
+        <p class="small" style="margin:2px 0;">${a.time}</p>
+      </div>
+      <span class="status-tag ${a.status === 'Sent' ? 'status-sent' : 'status-resolved'}">${a.status}</span>
+    `;
+    listEl.appendChild(row);
+  });
+}
+</script>
+</body>
+</html>

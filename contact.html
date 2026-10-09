@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emergency Contact - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">
+    <a href="dashboard.html" class="back-btn">←</a>
+    <h1>Emergency Contact</h1>
+  </div>
+  <div class="screen" id="viewMode">
+    <div class="card" id="contactCard" style="display:none;">
+      <div class="card-row">
+        <div style="font-size:34px;">👤</div>
+        <div style="flex:1;">
+          <p class="card-title" id="cName">-</p>
+          <p class="small" id="cPhone">-</p>
+        </div>
+      </div>
+      <span class="pill-green mt" style="display:inline-block;">Primary</span>
+    </div>
+
+    <p class="small center mt" id="noContact" style="display:none;">No emergency contact added yet.</p>
+
+    <div class="card" onclick="showForm()" style="cursor:pointer;">
+      <div class="card-row" style="justify-content:space-between;">
+        <span class="card-title">✏️ Edit Contact</span><span>›</span>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--primary-light);border-color:var(--primary-light);">
+      <p class="small" style="margin:0;">🛡️ Make sure your emergency contact is always reachable.</p>
+    </div>
+  </div>
+
+  <div class="screen" id="formMode" style="display:none;">
+    <div class="field">
+      <label>Contact Name</label>
+      <div class="input-wrap"><span class="icon">👤</span><input id="inName"></div>
+    </div>
+    <div class="field">
+      <label>Contact Number</label>
+      <div class="input-wrap"><span class="icon">📞</span><input id="inPhone"></div>
+    </div>
+    <button class="btn btn-primary" onclick="save()">Save Contact</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="dashboard.html"><span class="nav-icon">🏠</span>Home</a>
+    <a href="location.html"><span class="nav-icon">📍</span>Location</a>
+    <a href="history.html"><span class="nav-icon">🕐</span>History</a>
+    <a href="settings.html"><span class="nav-icon">⚙️</span>Settings</a>
+  </nav>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+requireAuth();
+function render() {
+  const contact = getContact();
+  if (contact) {
+    document.getElementById("contactCard").style.display = "block";
+    document.getElementById("noContact").style.display = "none";
+    document.getElementById("cName").textContent = contact.name;
+    document.getElementById("cPhone").textContent = contact.phone || "";
+  } else {
+    document.getElementById("contactCard").style.display = "none";
+    document.getElementById("noContact").style.display = "block";
+  }
+}
+function showForm() {
+  const contact = getContact();
+  document.getElementById("inName").value = contact ? contact.name : "";
+  document.getElementById("inPhone").value = contact ? contact.phone : "";
+  document.getElementById("viewMode").style.display = "none";
+  document.getElementById("formMode").style.display = "block";
+}
+function save() {
+  const name = document.getElementById("inName").value.trim();
+  const phone = document.getElementById("inPhone").value.trim();
+  if (!name) { alert("Please enter a name."); return; }
+  saveContact({ name, phone, primary: true });
+  document.getElementById("formMode").style.display = "none";
+  document.getElementById("viewMode").style.display = "block";
+  render();
+}
+render();
+</script>
+</body>
+</html>

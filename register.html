@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create Account - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">
+    <a href="login.html" class="back-btn">←</a>
+    <h1>Create Account</h1>
+  </div>
+  <div class="screen">
+    <div id="errorMsg" class="small" style="color:var(--red);display:none;margin-bottom:10px;"></div>
+
+    <div class="field">
+      <label>Full Name</label>
+      <div class="input-wrap"><span class="icon">👤</span><input id="name" placeholder="Full Name"></div>
+    </div>
+    <div class="field">
+      <label>Age</label>
+      <div class="input-wrap"><span class="icon">📅</span><input id="age" type="number" placeholder="Age"></div>
+    </div>
+    <div class="field">
+      <label>Phone Number</label>
+      <div class="input-wrap"><span class="icon">📞</span><input id="phone" placeholder="Phone Number"></div>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <div class="input-wrap"><span class="icon">✉️</span><input id="email" type="email" placeholder="Email"></div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="input-wrap"><span class="icon">🔒</span><input id="password" type="password" placeholder="Password"></div>
+    </div>
+
+    <p class="card-title" style="margin-bottom:8px;">Emergency Contact</p>
+    <div class="field">
+      <label>Contact Name</label>
+      <div class="input-wrap"><span class="icon">👤</span><input id="contactName" placeholder="Contact Name"></div>
+    </div>
+    <div class="field">
+      <label>Contact Number</label>
+      <div class="input-wrap"><span class="icon">📞</span><input id="contactPhone" placeholder="Contact Number"></div>
+    </div>
+
+    <button class="btn btn-primary" onclick="handleRegister()">Register</button>
+    <p class="center small mt">Already have an account? <a href="login.html" class="link">Login</a></p>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function handleRegister() {
+  const name = document.getElementById("name").value.trim();
+  const age = document.getElementById("age").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const contactName = document.getElementById("contactName").value.trim();
+  const contactPhone = document.getElementById("contactPhone").value.trim();
+  const errorEl = document.getElementById("errorMsg");
+
+  if (!name || !email || !password) {
+    errorEl.textContent = "Please fill in name, email and password.";
+    errorEl.style.display = "block";
+    return;
+  }
+  if (findUser(email)) {
+    errorEl.textContent = "An account with this email already exists.";
+    errorEl.style.display = "block";
+    return;
+  }
+
+  saveUser({ name, age, phone, email, password });
+  setCurrentUser(email);
+
+  if (contactName || contactPhone) {
+    saveContact({ name: contactName || "Emergency Contact", phone: contactPhone, primary: true });
+  }
+
+  window.location.href = "dashboard.html";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login - ElderSafe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+  <div class="screen">
+    <div class="logo-wrap" style="margin-top:30px;">
+      <div class="logo-circle" style="width:80px;height:80px;font-size:38px;">💙</div>
+      <p class="brand" style="font-size:24px;">ElderSafe</p>
+      <p class="tagline">Login to your account</p>
+    </div>
+
+    <div id="errorMsg" class="small" style="color:var(--red);display:none;margin-bottom:10px;"></div>
+
+    <div class="field">
+      <label>Email</label>
+      <div class="input-wrap">
+        <span class="icon">✉️</span>
+        <input type="email" id="email" placeholder="you@example.com">
+      </div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="input-wrap">
+        <span class="icon">🔒</span>
+        <input type="password" id="password" placeholder="Password">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="handleLogin()">Login</button>
+
+    <p class="center small mt">
+      Don't have an account? <a href="register.html" class="link">Register</a>
+    </p>
+
+    <p class="center small" style="margin-top:30px;">
+      Demo tip: click "Register" to create your first account —
+      no real server is used, so use any email/password you like.
+    </p>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+function handleLogin() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const errorEl = document.getElementById("errorMsg");
+
+  const user = findUser(email);
+  if (!user || user.password !== password) {
+    errorEl.textContent = "Invalid email or password.";
+    errorEl.style.display = "block";
+    return;
+  }
+  setCurrentUser(user.email);
+  window.location.href = "dashboard.html";
+}
+</script>
+</body>
+</html>
